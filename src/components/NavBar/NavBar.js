@@ -77,6 +77,7 @@ const NavBar = ({
             firebase.updatePassword(updateString)
         } else {
             firebase.updateDisplayName(updateString, currentUser.groupCode)
+            // firebase.updateDisplayNameInGroup(updateString, currentUser.groupCode)
         }
         setUpdateSuccess(true)
         setUpdatePassword(false)
