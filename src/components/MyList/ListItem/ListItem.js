@@ -164,7 +164,7 @@ const ListItem = ({ item, currentUser, selectedEmail, enableEdit }) => {
                 <TextWrapper>
                     <Name>{item.name.toUpperCase()}</Name>
                     <Description>{item.description}</Description>
-                    <Link href={item.link}>LINK TO ITEM ONLINE</Link>
+                    {item.link && <Link href={item.link}>LINK TO ITEM ONLINE</Link>}
                 </TextWrapper>
                 {enableEdit ?
                     <EditWrapper onClick={() => setShowItemModal(true)}>
