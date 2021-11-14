@@ -21,6 +21,8 @@ export default function App () {
 		})
     })
 
+    console.log("ADDING THIS FOR NOW")
+
 	return firebaseInitialized !== false ? (
         <Router>
             <Flex authentication={window.location.pathname === '/authenticate'}>
