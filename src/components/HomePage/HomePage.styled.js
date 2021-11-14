@@ -61,7 +61,7 @@ const GroupName = styled(GroupsHeader)`
  const StyledButton = styled.button`
     background-color: ${props => props.selected ? "#26323f" : "white"};
     border: 2px solid #26323f;
-    color:  ${props => props.selected ? "#dddddd" : "#26323f"};;
+    color:  ${props => props.selected ? "#dddddd" : "#26323f"};
     cursor: pointer;
     font-size: 1rem;
     margin: 0 0.5rem;

@@ -79,7 +79,7 @@ const Modal = styled.div`
     margin: auto auto auto 30%;
     overflow: auto;
     padding: 20px;
-    width: ${props => props.hasImage ? "60%" : "37%"};;
+    width: ${props => props.hasImage ? "60%" : "37%"};
 `;
 
 const ModalHeader = styled.p`
