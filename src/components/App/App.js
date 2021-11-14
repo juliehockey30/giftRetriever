@@ -23,24 +23,22 @@ export default function App () {
 
 	return firebaseInitialized !== false ? (
         <Router>
-            <div>
-                <Flex authentication={window.location.pathname === '/authenticate'}>
-                    {showNavBar ?
-                        <>
-                            <HamburgerMenu />
-                            <SideNavBar />
-                        </>
-                    : null}
-                    <Switch>
-                        <Route exact path="/"><HomePage setShowNavBar={setShowNavBar} /></Route>
-                        <Route exact path="/authenticate"><Authentication setShowNavBar={setShowNavBar} /></Route>
-                        <Route exact path="/my-list"><MyList setShowNavBar={setShowNavBar} /></Route>
-                        <Route exact path="/group-lists"><TheirLists setShowNavBar={setShowNavBar} /></Route>
-                        <Route exact path="/purchased"><PurchaseHistory setShowNavBar={setShowNavBar} /></Route>
-                    </Switch>
-                </Flex>
-            </div>
+            <Flex authentication={window.location.pathname === '/authenticate'}>
+                {showNavBar ?
+                    <>
+                        <HamburgerMenu />
+                        <SideNavBar />
+                    </>
+                : null}
+                <Switch>
+                    <Route exact path="/"><HomePage setShowNavBar={setShowNavBar} /></Route>
+                    <Route exact path="/authenticate"><Authentication setShowNavBar={setShowNavBar} /></Route>
+                    <Route exact path="/my-list"><MyList setShowNavBar={setShowNavBar} /></Route>
+                    <Route exact path="/group-lists"><TheirLists setShowNavBar={setShowNavBar} /></Route>
+                    <Route exact path="/purchased"><PurchaseHistory setShowNavBar={setShowNavBar} /></Route>
+                </Switch>
+            </Flex>
         </Router>
     )
-    : <div>I AM LOADING</div>
+    : <div>SIT! STAY! WE'RE FETCHING YOUR DATA  </div>
 }
