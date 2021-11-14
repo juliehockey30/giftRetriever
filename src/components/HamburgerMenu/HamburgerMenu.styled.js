@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 const ApiButton = styled.button`
     background-color: #c71518;
@@ -35,51 +36,56 @@ const CancelButton = styled.button`
     }
 `;
 
+
+const CloseIcon = styled.button`
+    background-color: #26323f;
+    border: unset;
+    color: white;
+    font-size: 2rem;
+    margin-top: 0.5rem;
+    position: absolute;
+    right: 1rem;
+`;
+
 const FormWrapper = styled.div`
     align-items: center;
     display: flex;
     flex-direction: row;
     margin: auto;
+`;
 
-    @media(max-width: 768px) {
-        flex-direction: column;
+const HamburgerIcon = styled.img`
+    height: 2rem;
+    left: 1rem;
+    position: absolute;
+    top: 1rem;
+    width: 2rem;
+
+    @media(min-width: 769px) {
+        display: none;
     }
 `;
 
-const HeaderText = styled.p`
-    color: #3d3937;
-    font-size: 4rem;
-    margin-top: 4rem;
-
-    @media(max-width: 768px) {
-        font-size: 2.5rem;
-    }
+const Logo = styled.img`
+    margin: 3rem 2.5rem 1rem 2.5rem;
+    width: 6rem;
 `;
 
-const ImagePreview = styled.img`
-    height: 15rem;
-    margin-bottom: 1rem;
-    object-fit: cover;
-    opacity: ${props => props.loading ? '0.5' : '1'};
-    width: 15rem;
-`;
-
-const ImageWrapper = styled.div`
-    align-items: center;
+const MenuBackground = styled.div`
+    background-color: #26323f;
     display: flex;
     flex-direction: column;
-    margin: 0 auto 0 4rem;
+    height: 100vh;
+    position: fixed;
+    width: 14rem;
+    z-index: 10;
 
-    @media(max-width: 768px) {
-        margin: 0;
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
+    font-family: 'Zen Antique', serif;
+
+    @media(min-width: 769px) {
+        display: none;
     }
-`;
-
-const ListWrapper = styled.div`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
 `;
 
 const Modal = styled.div`
@@ -88,15 +94,10 @@ const Modal = styled.div`
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
     display: flex;
     flex-direction: column;
-    margin: auto auto auto 30%;
+    margin: 1.25rem;
     overflow: auto;
     padding: 20px;
-    width: ${props => props.hasImage ? "60%" : "37%"};
-
-    @media(max-width: 768px) {
-        margin: 1.25rem;
-        width: 80%;
-    }
+    width: 80%;
 `;
 
 const ModalHeader = styled.p`
@@ -104,20 +105,27 @@ const ModalHeader = styled.p`
     font-size: 2rem;
     margin: 1rem auto 3rem auto;
     text-align: center;
-
-    @media(max-width: 768px) {
-        font-size: 1.5rem;
-    }
 `;
 
-const NoItemsText = styled.p`
-    color: #7f7e7b;
+const NavItem = styled(Link)`
+    color: ${props => props.selected ? "white" : "#c3c3bd"};
     font-size: 1rem;
-    font-style: italic;
+    margin: 0.5rem 0 0.5rem 1rem;
+    text-decoration: none;
+    transition: 0.2s ease all;
 
-    @media(max-width: 768px) {
-        font-size: 0.75rem;
+    &:hover {
+        font-size: 1.1rem;
     }
+
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
+    font-family: 'Zen Antique', serif;
+`;
+
+const NavItemText = styled.p`
+    border-bottom: ${props => props.selected ? "1px solid #e22023" : "unset"};
+    margin: 0;
+    width: fit-content;
 `;
 
 const Overlay = styled.div`
@@ -134,21 +142,23 @@ const Overlay = styled.div`
     z-index: 1;
 `;
 
-const StyledButton = styled.button`
-    background-color: ${props => props.selected ? "#26323f" : "white"};
-    border: 2px solid #26323f;
-    color:  ${props => props.selected ? "#dddddd" : "#26323f"};
+const SignOutButton = styled.button`
+    background-color: #c71518;
+    border: unset;
+    bottom: 1rem;
+    color:  white;
     cursor: pointer;
     font-size: 1rem;
-    margin: 0 0.5rem 3rem 0.5rem;
-    padding: 1rem;
+    margin: 0 1rem;
+    padding: 0.5rem;
+    position: fixed;
+    width: 12rem;
 
     @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
     font-family: 'Zen Antique', serif;
 
     &:hover {
-        background-color: #26323f;
-        color: #dddddd;
+        font-size: 1.1rem;
     }
 `;
 
@@ -159,7 +169,7 @@ const StyledInput = styled.input`
     display: block;
     font-size: 1rem;
     padding: 10px 0 8px 0;
-    width: 350px;
+    width: 300px;
 
     &:focus {
         border-bottom: 1px solid #26323f;
@@ -168,10 +178,6 @@ const StyledInput = styled.input`
 
     @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
     font-family: 'Zen Antique', serif;
-
-    @media(max-width: 768px) {
-        width: 300px;
-    }
 `;
 
 const StyledLabel = styled.label`
@@ -188,62 +194,41 @@ const StyledLabel = styled.label`
     }
 `;
 
-const UploadImageButton = styled.label`
-    background-color: "white";
-    border: 2px solid #26323f;
-    color:  "#26323f";
+const UpdateProfileButton = styled.button`
+    background-color: white;
+    border: unset;
+    bottom: 4rem;
+    color:  #26323f;
     cursor: pointer;
     font-size: 1rem;
-    height: fit-content;
-    margin-left: 3rem;
-    padding: 1rem;
-    width: fit-content;
+    margin: 0 1rem;
+    padding: 0.5rem;
+    position: fixed;
+    width: 12rem;
 
     @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
     font-family: 'Zen Antique', serif;
 
     &:hover {
-        background-color: #26323f;
-        color: #dddddd;
-    }
-`;
-
-const UploadImageWrapper = styled.div`
-    margin: 2rem 0;
-`;
-
-const Wrapper = styled.div`
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    height: ${props => props.hasItems ? "100%" : "100vh"};
-    margin: 0 0 3rem 19rem;
-    width: -webkit-fill-available;
-
-    @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
-    font-family: 'Zen Antique', serif;
-
-    @media(max-width: 768px) {
-        margin: 0 1rem 3rem 1rem;
+        font-size: 1.1rem;
     }
 `;
 
 export {
     ApiButton,
     CancelButton,
+    CloseIcon,
     FormWrapper,
-    HeaderText,
-    ImagePreview,
-    ImageWrapper,
-    ListWrapper,
+    HamburgerIcon,
+    Logo,
+    MenuBackground,
     Modal,
     ModalHeader,
-    NoItemsText,
-    Overlay,
-    StyledButton,
+    NavItem,
+    NavItemText,
     StyledInput,
     StyledLabel,
-    UploadImageButton,
-    UploadImageWrapper,
-    Wrapper
+    Overlay,
+    SignOutButton,
+    UpdateProfileButton
 }

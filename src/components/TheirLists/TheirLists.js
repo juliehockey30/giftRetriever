@@ -1,140 +1,259 @@
 import React, { useEffect, useState } from 'react'
 import {
-    Wrapper,
-    NameSelect,
-    NameHeader,
-    Overlay,
-    PurchasedHeader,
+    ApiButton,
+    CancelButton,
+    DropDownContainer,
+    DropDownHeader,
+    DropDownList,
+    HeaderText,
+    ItemName,
+    ListItem,
+    ListWrapper,
+    Modal,
+    ModalHeader,
+    ModalSubtext,
     NoItemsText,
+    Overlay,
+    PurchasedContainer,
+    PurchasedListWrapper,
+    PuchasedTitle,
+    SelectsWrapper,
+    Wrapper,
 } from './TheirLists.styled'
+import { useHistory } from 'react-router-dom';
 import firebase from '../../config/fire'
-import ListItem from '../MyList/ListItem/ListItem'
+import WishListItem from './WishListItem/WishListItem'
 
-const TheirLists = ({ currentUser }) => {
+const TheirLists = ({ setShowNavBar     }) => {
 
-    const [entireGroup, setEntireGroup] = useState([])
-    const [selectedName, setSelectedName] = useState('')
-    const [selectedEmail, setSelectedEmail] = useState('')
-    const [selectedWishList, setSelectedWishList] = useState([])
-    const [selectedWishListPurchased, setSelectedWishListPurchased] = useState([])
+    const history = useHistory();
+    if(!firebase.getCurrentUserEmail()) {
+        history.push('/authenticate')
+    }
+
+    const [currentUserEmail] = useState(firebase.getCurrentUserEmail())
+    const [currentUserDisplayName] = useState(firebase.getCurrentUserDisplayName())
+    const userName = currentUserEmail ? currentUserEmail.substr(0, currentUserEmail.indexOf('@')) : ''
+    const [selectedGroup, setSelectedGroup] = useState('')
+    const [openSelectGroupMenu, setOpenSelectGroupMenu] = useState(false)
+    const [selectedUser, setSelectedUser] = useState()
+    const [openSelectListMenu, setOpenSelectListMenu] = useState(false)
+    const [usersGroupCodes, setUsersGroupCodes] = useState()
+    const [usersGroups, setUsersGroups] = useState()
+    const [allGroups, setAllGroups] = useState()
+    const [allUsersInGroup, setAllUsersInGroup] = useState()
+    const [selectedList, setSelectedList] = useState()
+    const [showConfirmPurchasedModal, setShowConfirmPurchasedModal] = useState(false)
+    const [itemToBePurchased, setItemToBePurchased] = useState()
 
     useEffect(() => {
-        if(currentUser) {
-            const userName = currentUser.email && currentUser.email.substr(0, currentUser.email.indexOf('@'));
-            const groupCode = currentUser.groupCode
-            const db = firebase.getEntireGroup(groupCode)
+        setShowNavBar(true)
+    }, [setShowNavBar])
+
+    useEffect(() => {
+        const db = firebase.getAllGroups()
+        db.on('value', function(snapshot) {
+            let allGroupsArr = []
+            snapshot.forEach(function(group) {
+                const groupObj = {
+                    code: group.key,
+                    name: group.val().name
+                }
+                allGroupsArr.push(groupObj);
+            });
+            setAllGroups(allGroupsArr)
+        });
+    }, [])
+
+    useEffect(() => {
+        const db = firebase.getUsersGroups(userName)
+        db.on('value', function(snapshot) {
+            let usersGroupsArr = []
+            snapshot.forEach(function(group) {
+                usersGroupsArr.push(group.val().groupCode);
+            });
+            setUsersGroupCodes(usersGroupsArr)
+        });
+    }, [userName])
+
+    useEffect(() => {
+        if(selectedGroup) {
+            const db = firebase.getAllUsersInGroup(selectedGroup.code)
             db.on('value', function(snapshot) {
-                let itemsArr = []
-                snapshot.forEach(function(item) {
-                    if(item.val().email !== userName) {
-                        itemsArr.push(item.val());
+                let usersArr = []
+                snapshot.forEach(function(user) {
+                    if(user.val().name !== currentUserDisplayName) {
+                        usersArr.push({ displayName: user.val().name, userName: user.val().userName });
                     }
                 });
-                setEntireGroup(itemsArr)
+                setAllUsersInGroup(usersArr)
             });
         }
-    }, [currentUser])
+    }, [selectedGroup, currentUserDisplayName])
 
-    const selectList = (e) => {
-        let selectedIndex = e.target.options.selectedIndex;
-        let selectedEmailTarget = e.target.options[selectedIndex].getAttribute('username');
-        setSelectedName(e.target.value)
-        setSelectedEmail(selectedEmailTarget)
-        
-        let allItems = []
-        let allItemsFiltered = []
-
-        entireGroup.forEach(person => {
-            if(person.wishList && person.name === e.target.value) {
-                allItems = Object.entries(person.wishList)
-                allItems.forEach(item => {
-                    const key = item[0]
-                    const name = item[1].name
-                    const description = item[1].description
-                    const link = item[1].link
-                    const purchased = item[1].purchased
-                    const imageUrl = item[1].imageUrl
-                    const imageName = item[1].imageName
-
-                    const filteredItem = {
-                        key: key,
-                        name: name,
-                        description: description,
-                        link: link,
-                        purchased: purchased,
-                        imageUrl: imageUrl,
-                        imageName: imageName
-                    }
-                    allItemsFiltered.push(filteredItem)
-                })
-            }
-
-            let purchasedItems = []
-            let notPurchasedItems = []
-
-            allItemsFiltered.forEach(item => {
-                if(item.purchased === false) {
-                    notPurchasedItems.push(item)
-                } else {
-                    purchasedItems.push(item)
+    useEffect(() => {
+        if(allGroups && usersGroupCodes) {
+            const usersGroupsArray = []
+            allGroups.forEach((group) => {
+                if (usersGroupCodes.includes(group.code)){
+                    usersGroupsArray.push({ name: group.name, code: group.code })
                 }
             })
-            setSelectedWishList(notPurchasedItems)
-            setSelectedWishListPurchased(purchasedItems)
-        })
+            setUsersGroups(usersGroupsArray)
+        }
+    }, [allGroups, usersGroupCodes])
+
+    useEffect(() => {
+        if(selectedUser) {
+            const db = firebase.getSelectedUsersWishList(selectedUser.userName)
+            db.on('value', function(snapshot) {
+                let usersListArr = []
+                snapshot.forEach(function(user) {
+                    const obj = {
+                        key: user.key,
+                        ...user.val()
+                    }
+                    usersListArr.push(obj);
+                });
+                setSelectedList(usersListArr)
+            });
+        }
+    }, [selectedUser])
+
+    async function markItemAsPurchased(userName, key, data) {
+        try {
+             await firebase.markItemAsPurchased(userName, key, data)
+         } catch(error) {
+             alert(error.message)
+         }
+     }
+
+     async function addItemToPurchasedList(userName, item) {
+        try {
+             await firebase.addItemToPurchasedList(userName, item)
+         } catch(error) {
+             alert(error.message)
+         }
+     }
+
+    async function handleMarkAsPurchased() {
+        const data = { purchased: true }
+        const preppedItem = {
+            purchasedFor: selectedUser.displayName,
+            ...itemToBePurchased
+        }
+        await markItemAsPurchased(selectedUser.userName, itemToBePurchased.key, data )
+        await addItemToPurchasedList(userName, preppedItem )
+        setShowConfirmPurchasedModal(false)
+    }
+
+    function handleOpenSelectGroup() {
+        setOpenSelectGroupMenu(true)
+        setOpenSelectListMenu(false)
+    }
+
+    function selectGroup(value) {
+        setSelectedGroup({name: value.name, code: value.code})
+        setSelectedUser(undefined)
+        setSelectedList(undefined)
+        setOpenSelectGroupMenu(false)
+    }
+
+    function selectUsersList(value) {
+        setSelectedUser({displayName: value.displayName, userName: value.userName })
+        setOpenSelectListMenu(false)
     }
  
     return (
-        <Wrapper>
-            <NameSelect onChange={e => selectList(e)}>
-                <option
-                    key={"empty"}
-                    value={"empty"}
-                    hidden
-                >
-                SELECT PERSON TO VIEW THEIR LIST
-                </option>
-                {entireGroup.map(person => (
-                    <option
-                        key={person.email}
-                        value={person.name}
-                        username={person.email}
-                    >
-                    {person.name.toUpperCase()}
-                    </option>
-                ))}
-            </NameSelect>
-            {selectedName ?
-                <>
-                    <NameHeader>{`${selectedName.toUpperCase()}'S WISH LIST`}</NameHeader>
-                    {selectedWishList.length === 0 &&
-                        <NoItemsText>{`${selectedName.toUpperCase()} DOESN'T HAVE ANY UN-PURCHASED ITEMS ON THEIR LIST.`}</NoItemsText>
+        <>
+            {showConfirmPurchasedModal &&
+                <Overlay>
+                    <Modal>
+                        <ModalHeader>Are you sure you want to mark</ModalHeader>
+                        <ItemName>{itemToBePurchased.name}</ItemName>
+                        <ModalHeader>as purchased?</ModalHeader>
+                        <ModalSubtext>This action cannot be undone.</ModalSubtext>
+                        <ApiButton onClick={handleMarkAsPurchased}>CONFIRM PURCHASED</ApiButton>
+                        <CancelButton onClick={() => setShowConfirmPurchasedModal(false)}>CANCEL</CancelButton>
+                    </Modal>
+                </Overlay>
+            }
+            <Wrapper hasItems={selectedList && selectedList.length > 0}>
+                <HeaderText>GROUP WISH LISTS</HeaderText>
+                <SelectsWrapper>
+                    <DropDownContainer>
+                        <DropDownHeader onClick={handleOpenSelectGroup}>
+                            {selectedGroup ? `${selectedGroup.name} ▼` : "SELECT GROUP ▼"}
+                        </DropDownHeader>
+                        {openSelectGroupMenu && (
+                            <DropDownList>
+                                {usersGroups.map(option => (
+                                    <ListItem onClick={() => selectGroup(option)} key={Math.random()}>
+                                    {option.name}
+                                    </ListItem>
+                                ))}
+                            </DropDownList>
+                        )}
+                    </DropDownContainer>
+                    {selectedGroup &&
+                        <DropDownContainer>
+                            <DropDownHeader onClick={() => setOpenSelectListMenu(true)}>
+                                {selectedUser ? `${selectedUser.displayName} ▼` : "SELECT WISH LIST ▼"}
+                            </DropDownHeader>
+                            {openSelectListMenu && (
+                                <DropDownList>
+                                    <>
+                                        {allUsersInGroup.length === 0 ? 
+                                            <ListItem disabled={true}>
+                                                No others in group yet
+                                            </ListItem>    
+                                        : <>
+                                            {allUsersInGroup.map(option => (
+                                                <ListItem onClick={() => selectUsersList(option)} key={Math.random()}>
+                                                    {option.displayName}
+                                                </ListItem>
+                                            ))}
+                                        </>
+                                        }
+                                    </>
+                                </DropDownList>
+                            )}
+                        </DropDownContainer>
                     }
-                    {selectedWishList.map(item => (
-                        <ListItem
-                            enableEdit={false}
-                            item={item}
-                            selectedEmail={selectedEmail}
-                            currentUser={currentUser}
-                        />
-                    ))}
-                    <PurchasedHeader>{`ALREADY PURCHASED ON ${selectedName.toUpperCase()}'S LIST`}</PurchasedHeader>
-                    {selectedWishListPurchased.length === 0 &&
-                        <NoItemsText>{`NO ITEMS OFF ${selectedName.toUpperCase()}'S LIST HAVE BEEN PURCHASED YET.`}</NoItemsText>
+                </SelectsWrapper>
+                {selectedList && 
+                    <>
+                        {selectedList.length === 0 ? 
+                            <NoItemsText>{`${selectedUser.displayName} hasn't added any items to their wish list yet.`}</NoItemsText> 
+                        :
+                        <>
+                            <ListWrapper>
+                                {selectedList.filter(gift => !gift.purchased).map(item => (
+                                    <WishListItem 
+                                        key={item.key}
+                                        item={item}
+                                        setItemToBePurchased={setItemToBePurchased}
+                                        setShowConfirmPurchasedModal={setShowConfirmPurchasedModal}
+                                    />
+                                ))}
+                            </ListWrapper>
+                            <PuchasedTitle>Already Purchased Gifts</PuchasedTitle>
+                            <PurchasedContainer>
+                                <PurchasedListWrapper>
+                                {selectedList.filter(gift => gift.purchased).map(item => (
+                                    <WishListItem 
+                                        key={item.key}
+                                        item={item}
+                                    />
+                                ))}
+                            </PurchasedListWrapper>
+                        </PurchasedContainer>
+                    </>
                     }
-                    <Overlay>
-                        {selectedWishListPurchased.map(item => (
-                            <ListItem
-                                enableEdit={false}
-                                item={item}
-                                selectedEmail={selectedEmail}
-                                currentUser={currentUser}
-                            />
-                        ))}
-                    </Overlay>
                 </>
-            : null }
-        </Wrapper>
+                }
+            </Wrapper>
+        </>
     )
 }
 

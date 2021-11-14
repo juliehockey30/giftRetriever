@@ -29,11 +29,10 @@ var firebaseConfig = {
       this.auth.signOut()
     }
 
-    async register(name, groupCode, email, password) {
+    async register(name, email, password) {
       await(this.auth.createUserWithEmailAndPassword(email, password))
       return this.auth.currentUser.updateProfile({
         displayName: name,
-        photoURL: groupCode
       })
     }
 
@@ -47,8 +46,12 @@ var firebaseConfig = {
       return this.auth.currentUser.updatePassword(newPassword)
     }
 
-    updateDisplayName(newName, groupCode) {
-      return this.auth.currentUser.updateProfile({ displayName: newName, photoURL: groupCode })
+    updateDisplayName(newName) {
+      return this.auth.currentUser.updateProfile({ displayName: newName })
+    }
+
+    updateDisplayNameInGroup(groupCode, userName, data) {
+      return this.db.ref(`groups/${groupCode}/users/${userName}`).update(data);
     }
 
     getCurrentUserEmail() {
@@ -63,42 +66,83 @@ var firebaseConfig = {
       return this.auth.currentUser && this.auth.currentUser.displayName
     }
 
-    addUserToGroup(groupCode, email, displayName) {
-      return this.db.ref(`${groupCode}/${email}`).set({
-        email: email,
+    createGroup(groupCode, groupName,) {
+      return this.db.ref(`groups/${groupCode}`).set({
+        name: groupName,
+      });
+    }
+
+    addGroupToUser(groupCode, userName) {
+      return this.db.ref(`users/${userName}/groups`).push().set({
+        code: groupCode,
+      });
+    }
+
+    addUserToGroup(groupCode, userName, displayName) {
+      return this.db.ref(`groups/${groupCode}/users/${userName}`).set({
+        userName: userName,
         name: displayName
       });
     }
 
-    getMyWishListItems(groupCode, email) {
-      return this.db.ref(`${groupCode}/${email}/wishList`)
+    attachGroupToUser(groupCode, userName) {
+      return this.db.ref(`users/${userName}/groups`).push().set({
+        groupCode: groupCode,
+      });
     }
 
-    addItemToList(groupCode, email, name, description, link, url, imageName) {
-      return this.db.ref(`${groupCode}/${email}/wishList`).push({
+    getUsersGroups(userName) {
+      return this.db.ref(`users/${userName}/groups`)
+    }
+
+    getAllGroups() {
+      return this.db.ref('/groups')
+    }
+
+    getAllUsersInGroup(groupCode) {
+      return this.db.ref(`/groups/${groupCode}/users`)
+    }
+
+    getMyWishListItems(userName) {
+      return this.db.ref(`users/${userName}/wishList`)
+    }
+
+    getSelectedUsersWishList(userName) {
+      return this.db.ref(`users/${userName}/wishList`)
+    }
+
+    getMyPurchasedItems(userName) {
+      return this.db.ref(`users/${userName}/purchasedList`)
+    }
+
+    addItemToList(userName, name, description, link, url) {
+      return this.db.ref(`users/${userName}/wishList`).push({
         name: name,
         description: description,
         link: link,
         purchased: false,
         imageUrl: url,
-        imageName: imageName
       });
     }
 
-    updateItem(groupCode, email, key, data) {
-      return this.db.ref(`${groupCode}/${email}/wishList`).child(key).update(data);
+    updateItem(userName, key, data) {
+      return this.db.ref(`users/${userName}/wishList`).child(key).update(data);
     }
 
-    deleteItem(groupCode, email, key) {
-      return this.db.ref(`${groupCode}/${email}/wishList`).child(key).remove();
+    deleteItem(userName, key) {
+      return this.db.ref(`users/${userName}/wishList`).child(key).remove();
     }
 
     getEntireGroup(groupCode) {
       return this.db.ref(`${groupCode}`)
     }
 
-    markItemAsPurchased(groupCode, email, key, data) {
-      return this.db.ref(`${groupCode}/${email}/wishList`).child(key).update(data);
+    markItemAsPurchased(userName, key, data) {
+      return this.db.ref(`users/${userName}/wishList`).child(key).update(data);
+    }
+
+    addItemToPurchasedList(userName, item) {
+      return this.db.ref(`users/${userName}/purchasedList`).push(item);
     }
 
     sendForgotPasswordEmail(email) {

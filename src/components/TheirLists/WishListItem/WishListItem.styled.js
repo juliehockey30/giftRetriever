@@ -8,9 +8,11 @@ const Box = styled.div`
     display: flex;
     flex-direction: column;
     margin: 1rem;
-    padding: 1rem 1rem  7.5rem 1rem;
+    padding: ${props => props.purchased ? "1rem" : "1rem 1rem  7.5rem 1rem"};
     position: relative;
     text-align: center;
+    top: 0;
+    left: 0;
     width: 16rem;
 
     @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
@@ -21,24 +23,6 @@ const ButtonWrapper = styled.div`
     bottom: 0;
     margin: 0;
     position: absolute;
-`;
-
-const DeleteButton = styled.button`
-    background-color: white;
-    border: 2px solid #3d3937;
-    color:  #3d3937;
-    cursor: pointer;
-    font-size: 1rem;
-    margin: 0.5rem;
-    padding: 0.5rem;
-    width: 16rem;
-
-    @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
-    font-family: 'Zen Antique', serif;
-
-    &:hover {
-        font-size: 1.1rem;
-    }
 `;
 
 const EditButton = styled.button`
@@ -98,11 +82,10 @@ const NoImageItext = styled.p`
 export {
     Box,
     ButtonWrapper,
-    DeleteButton,
     EditButton,
     ItemDescription,
     ItemImage,
     ItemLink,
     ItemName,
-    NoImageItext
+    NoImageItext,
 };
