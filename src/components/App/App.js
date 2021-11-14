@@ -8,7 +8,7 @@ import TheirLists from '../TheirLists/TheirLists';
 import PurchaseHistory from '../PurchaseHistory/PurchaseHistory';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import firebase from '../../config/fire';
-import { Flex } from './App.styled'
+import { Flex, LoadingText, LoadingWrapper } from './App.styled'
 
 export default function App () {
 
@@ -24,7 +24,7 @@ export default function App () {
 	return firebaseInitialized !== false ? (
         <Router>
             <Flex authentication={window.location.pathname === '/authenticate'}>
-                {showNavBar ?
+                {showNavBar !== false ?
                     <>
                         <HamburgerMenu />
                         <SideNavBar />
@@ -39,6 +39,11 @@ export default function App () {
                 </Switch>
             </Flex>
         </Router>
+    ) : (
+        <LoadingWrapper>
+            <LoadingText>SIT!</LoadingText>
+            <LoadingText>STAY!</LoadingText>
+            <LoadingText>We're fetching your data.</LoadingText>
+        </LoadingWrapper>
     )
-    : <div>SIT! STAY! WE'RE FETCHING YOUR DATA  </div>
 }

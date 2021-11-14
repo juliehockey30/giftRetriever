@@ -10,6 +10,25 @@ const Flex = styled.div`
     font-family: 'Zen Antique', serif;
 `;
 
+const LoadingText = styled.p`
+    color: #3d3937;
+    font-size: 5rem;
+    margin: 0;
+    text-align: center;
+
+    @media(max-width: 768px) {
+        font-size: 3rem;
+    }
+`;
+
+const LoadingWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 4rem;
+`;
+
 export {
-    Flex
+    Flex,
+    LoadingText,
+    LoadingWrapper
 };
