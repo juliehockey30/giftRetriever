@@ -14,8 +14,6 @@ import {
     ModalSubtext,
     NoItemsText,
     Overlay,
-    PurchasedContainer,
-    PurchasedListWrapper,
     PuchasedTitle,
     SelectsWrapper,
     Wrapper,
@@ -238,16 +236,14 @@ const TheirLists = ({ setShowNavBar     }) => {
                                 ))}
                             </ListWrapper>
                             <PuchasedTitle>Already Purchased Gifts</PuchasedTitle>
-                            <PurchasedContainer>
-                                <PurchasedListWrapper>
+                            <ListWrapper>
                                 {selectedList.filter(gift => gift.purchased).map(item => (
                                     <WishListItem 
                                         key={item.key}
                                         item={item}
                                     />
                                 ))}
-                            </PurchasedListWrapper>
-                        </PurchasedContainer>
+                            </ListWrapper>
                     </>
                     }
                 </>

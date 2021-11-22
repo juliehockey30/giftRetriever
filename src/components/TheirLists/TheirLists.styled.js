@@ -180,19 +180,6 @@ const Overlay = styled.div`
     z-index: 1;
 `;
 
-
-const PurchasedContainer = styled.div`
-    margin-top: 1rem;
-    overflow-x: scroll;
-    width: 100%;
-`;
-
-const PurchasedListWrapper = styled(ListWrapper)`
-    flex-wrap: nowrap;
-    justify-content: start;
-    margin-top: 1rem;
-`;
-
 const PuchasedTitle = styled.p`
     color: #c71518;
     font-size: 2rem;
@@ -247,8 +234,6 @@ export {
     ModalSubtext,
     NoItemsText,
     Overlay,
-    PurchasedContainer,
-    PurchasedListWrapper,
     PuchasedTitle,
     SelectsWrapper,
     Wrapper
