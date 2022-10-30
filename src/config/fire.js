@@ -122,6 +122,7 @@ var firebaseConfig = {
         link: link,
         purchased: false,
         imageUrl: url,
+        dateAdded: firebase.database.ServerValue.TIMESTAMP
       });
     }
 
@@ -161,7 +162,17 @@ var firebaseConfig = {
       return this.storage.ref().child(imageName).getImageName()
     }
 
-
+    addItemToCurrentList(userName, key, data) {
+      const updatedItem = {
+          name: data.name,
+          description: data.description,
+          link: data.link,
+          purchased: false,
+          imageUrl: data.imageUrl,
+          dateAdded: firebase.database.ServerValue.TIMESTAMP
+      }
+      return this.db.ref(`users/${userName}/wishList`).child(key).update(updatedItem);
+    }
   }
 
   export default new Firebase();

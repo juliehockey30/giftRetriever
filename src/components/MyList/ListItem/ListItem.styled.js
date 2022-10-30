@@ -1,5 +1,23 @@
 import styled from 'styled-components';
 
+const AddToCurrentListButton = styled.button`
+    background-color: #c71518;
+    border: 2px solid#c71518;
+        color:  white;
+    cursor: pointer;
+    font-size: 1rem;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    width: 16rem;
+
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
+    font-family: 'Zen Antique', serif;
+
+    &:hover {
+        font-size: 1.1rem
+    }
+`;
+
 const Box = styled.div`
     align-items: center;
     background-color: #fefefe;
@@ -87,7 +105,7 @@ const ItemName = styled.p`
     text-transform: uppercase;
 `;
 
-const NoImageItext = styled.p`
+const NoImageText = styled.p`
     color: #c3c3bd;
     font-size: 0.75rem;
     height: 8rem;
@@ -96,6 +114,7 @@ const NoImageItext = styled.p`
 `;
 
 export {
+    AddToCurrentListButton,
     Box,
     ButtonWrapper,
     DeleteButton,
@@ -104,5 +123,5 @@ export {
     ItemImage,
     ItemLink,
     ItemName,
-    NoImageItext
+    NoImageText
 };

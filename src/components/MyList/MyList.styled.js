@@ -75,6 +75,28 @@ const ImageWrapper = styled.div`
     }
 `;
 
+const ItemToBeMovedName = styled.p`
+    color: #c71518;
+    font-size: 3rem;
+    margin: 1rem 0s;
+    text-align: center;
+
+    @media(max-width: 768px) {
+        font-size: 2.5rem;
+    }
+`;
+
+const ItemToBeMovedTitle = styled.p`
+    color: #3d3937;
+    font-size: 2rem;
+    margin: 0 auto;
+    text-align: center;
+
+    @media(max-width: 768px) {
+        font-size: 1.5rem;
+    }
+`;
+
 const ListWrapper = styled.div`
     display: flex;
     flex-direction: row;
@@ -132,6 +154,35 @@ const Overlay = styled.div`
     top: 0;
     width: 100%;
     z-index: 1;
+`;
+
+const PreviousListDescription = styled.p`
+    color: #3d3937;
+    font-size: 1rem;
+    margin: 0 5rem 2rem 5rem;
+    text-align: center;
+
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
+    font-family: 'Zen Antique', serif;
+
+    @media(max-width: 768px) {
+        margin: 6rem 1rem 0 1rem;
+    }
+`;
+
+
+const PreviousListTitle = styled.p`
+    color: #3d3937;
+    font-size: 2rem;
+    margin: 6rem 5rem 0 5rem;
+    text-align: center;
+
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap');
+    font-family: 'Zen Antique', serif;
+
+    @media(max-width: 768px) {
+        margin: 6rem 1rem 0 1rem;
+    }
 `;
 
 const StyledButton = styled.button`
@@ -235,15 +286,19 @@ export {
     HeaderText,
     ImagePreview,
     ImageWrapper,
+    ItemToBeMovedName,
+    ItemToBeMovedTitle,
     ListWrapper,
     Modal,
     ModalHeader,
     NoItemsText,
     Overlay,
+    PreviousListDescription,
+    PreviousListTitle,
     StyledButton,
     StyledInput,
     StyledLabel,
     UploadImageButton,
     UploadImageWrapper,
     Wrapper
-}
+};

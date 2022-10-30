@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import firebase from '../../config/fire';
+import { addItemToCurrentList, addItemToList, deleteItemFromList, updateItemOnList } from './api';
+import ListItem from './ListItem/ListItem';
 import {
     ApiButton,
     CancelButton,
@@ -6,22 +10,23 @@ import {
     HeaderText,
     ImagePreview,
     ImageWrapper,
+    ItemToBeMovedName,
+    ItemToBeMovedTitle,
     ListWrapper,
     Modal,
     ModalHeader,
     NoItemsText,
     Overlay,
+    PreviousListDescription,
+    PreviousListTitle,
     StyledButton,
     StyledInput,
     StyledLabel,
     UploadImageButton,
     UploadImageWrapper,
     Wrapper
-} from './MyList.styled'
-import firebase from '../../config/fire'
-import ListItem from './ListItem/ListItem'
-import { useHistory } from 'react-router-dom';
-import { addItemToList, deleteItemFromList, updateItemOnList } from './api'
+} from './MyList.styled';
+
 
 const MyList = ({ setShowNavBar }) => {
 
@@ -46,6 +51,8 @@ const MyList = ({ setShowNavBar }) => {
     const [modalHeaderText, setModalHeaderText] = useState('ADD ITEM TO WISH LIST')
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [itemToBeDeleted, setItemToBeDeleted] = useState('')
+    const [showMoveItemModal, setShowMoveItemModal] = useState(false)
+    const [itemToBeMoved, setItemToBeMoved] = useState('')
     const [itemToBeUpdatedKey, setItemToBeUpdatedKey] = useState('')
     const [isUpdating, setIsUpdating] = useState(false)
 
@@ -65,6 +72,7 @@ const MyList = ({ setShowNavBar }) => {
                 const purchased = item.val().purchased;
                 const imageUrl = item.val().imageUrl;
                 const imageName = item.val().imageName;
+                const dateAdded = item.val().dateAdded;
                 item = {
                     key,
                     name,
@@ -72,7 +80,8 @@ const MyList = ({ setShowNavBar }) => {
                     link,
                     purchased,
                     imageUrl,
-                    imageName
+                    imageName,
+                    dateAdded
                 }
                 itemsArr.push(item);
             });
@@ -141,6 +150,22 @@ const MyList = ({ setShowNavBar }) => {
         setChosenImage('')
     }
 
+    async function confirmMoveOnClick() {
+        const movingItem = {
+            name: itemName,
+            description: itemDescription,
+            link: itemLink,
+            imageUrl: chosenImage
+        }
+        console.log("ITEM TO BE MOVED IS ", itemToBeMoved)
+        await addItemToCurrentList(userName, itemToBeMoved.key, movingItem)
+        setShowMoveItemModal(false)
+        setItemName('')
+        setItemDescription('')
+        setItemLink('')
+        setItemImageUrl('')
+    }
+
     return (
         <>
             {showModal &&
@@ -204,13 +229,24 @@ const MyList = ({ setShowNavBar }) => {
                     </Modal>
                 </Overlay>
             }
+            {showMoveItemModal &&
+                <Overlay>
+                    <Modal>
+                        <ItemToBeMovedTitle>Are you sure you want to move:</ItemToBeMovedTitle>
+                        <ItemToBeMovedName>{itemToBeMoved.name}</ItemToBeMovedName>
+                        <ItemToBeMovedTitle>to your current wish list?</ItemToBeMovedTitle>
+                        <ApiButton onClick={confirmMoveOnClick}>CONFIRM MOVE</ApiButton>
+                        <CancelButton onClick={() => setShowMoveItemModal(false)}>CANCEL</CancelButton>
+                    </Modal>
+                </Overlay>
+            }
             <Wrapper hasItems={myList.length > 0}>
                 <HeaderText>MY WISH LIST</HeaderText>
                 <StyledButton onClick={addItemOnClick}>ADD ITEM TO WISH LIST</StyledButton>
                 {myList.length === 0 ? 
                     <NoItemsText>NO ITEMS HAVE BEEN ADDED TO YOUR WISH LIST YET</NoItemsText> :
                     <ListWrapper>
-                        {myList.map(item => (
+                        {myList.filter(i => i.dateAdded !== undefined).map(item => (
                             <ListItem 
                                 key={item.key}
                                 item={item}
@@ -229,6 +265,29 @@ const MyList = ({ setShowNavBar }) => {
                         ))}
                     </ListWrapper>
                 }
+                <PreviousListTitle>Previous Wish List Items</PreviousListTitle>
+                <PreviousListDescription>Items that were added to your wish list over 3 months ago and have not been marked as purchased will appear here.</PreviousListDescription>
+                <ListWrapper>
+                        {myList.filter(i => i.dateAdded === undefined && i.purchased === false ).map(item => (
+                            <ListItem 
+                                key={item.key}
+                                item={item}
+                                setItemName={setItemName}
+                                setItemLink={setItemLink}
+                                setItemDescription={setItemDescription}
+                                setChosenImage={setChosenImage}
+                                setShowModal={setShowModal}
+                                setConfirmButtonText={setConfirmButtonText}
+                                setModalHeaderText={setModalHeaderText}
+                                setShowDeleteModal={setShowDeleteModal}
+                                setShowMoveItemModal={setShowMoveItemModal}
+                                setItemToBeDeleted={setItemToBeDeleted}
+                                setItemToBeMoved={setItemToBeMoved}
+                                setItemToBeUpdatedKey={setItemToBeUpdatedKey}
+                                setIsUpdating={setIsUpdating}
+                            />
+                        ))}
+                    </ListWrapper>
             </Wrapper>
         </>
     )

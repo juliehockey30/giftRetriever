@@ -180,7 +180,7 @@ const Overlay = styled.div`
     z-index: 1;
 `;
 
-const PuchasedTitle = styled.p`
+const PurchasedTitle = styled.p`
     color: #c71518;
     font-size: 2rem;
     margin: 6rem 5rem 0 5rem;
@@ -234,7 +234,7 @@ export {
     ModalSubtext,
     NoItemsText,
     Overlay,
-    PuchasedTitle,
+    PurchasedTitle,
     SelectsWrapper,
     Wrapper
-}
+};

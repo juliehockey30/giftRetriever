@@ -29,6 +29,14 @@ async function updateItemOnList(userName, key, data) {
          alert(error.message)
      }
  }
- 
 
-export { addItemToList, deleteItemFromList, updateItemOnList }
+ async function addItemToCurrentList(userName, key, data) {
+    console.log("KEY IS: ", key)
+    try {
+         await firebase.addItemToCurrentList(userName, key, data)
+     } catch(error) {
+         alert(error.message)
+     }
+ }
+
+export { addItemToList, deleteItemFromList, updateItemOnList, addItemToCurrentList }
