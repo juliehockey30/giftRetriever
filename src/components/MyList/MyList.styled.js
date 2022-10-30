@@ -166,7 +166,7 @@ const PreviousListDescription = styled.p`
     font-family: 'Zen Antique', serif;
 
     @media(max-width: 768px) {
-        margin: 6rem 1rem 0 1rem;
+        margin: 0 2rem 2rem 2rem;
     }
 `;
 
