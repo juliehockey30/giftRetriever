@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import firebase from '../../config/fire';
 import {
     ApiButton,
     CancelButton,
@@ -16,11 +18,9 @@ import {
     Overlay,
     PurchasedTitle,
     SelectsWrapper,
-    Wrapper,
-} from './TheirLists.styled'
-import { useHistory } from 'react-router-dom';
-import firebase from '../../config/fire'
-import WishListItem from './WishListItem/WishListItem'
+    Wrapper
+} from './TheirLists.styled';
+import WishListItem from './WishListItem/WishListItem';
 
 const TheirLists = ({ setShowNavBar     }) => {
 
@@ -226,7 +226,7 @@ const TheirLists = ({ setShowNavBar     }) => {
                         :
                         <>
                             <ListWrapper>
-                                {selectedList.filter(gift => !gift.purchased).map(item => (
+                                {selectedList.filter(gift => !gift.purchased && gift.dateAdded !== undefined).map(item => (
                                     <WishListItem 
                                         key={item.key}
                                         item={item}
@@ -237,7 +237,7 @@ const TheirLists = ({ setShowNavBar     }) => {
                             </ListWrapper>
                             <PurchasedTitle>Already Purchased Gifts</PurchasedTitle>
                             <ListWrapper>
-                                {selectedList.filter(gift => gift.purchased).map(item => (
+                                {selectedList.filter(gift => gift.purchased && gift.dateAdded !== undefined).map(item => (
                                     <WishListItem 
                                         key={item.key}
                                         item={item}
