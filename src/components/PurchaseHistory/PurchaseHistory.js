@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import firebase from '../../config/fire';
+import ListItem from './ListItem/ListItem';
 import {
     HeaderText,
     ListWrapper,
     NoItemsText,
-    Wrapper,
-} from './PurchaseHistory.styled'
-import { useHistory } from 'react-router-dom';
-import firebase from '../../config/fire'
-import ListItem from './ListItem/ListItem'
+    Wrapper
+} from './PurchaseHistory.styled';
 
 const PurchaseHistory = ({ setShowNavBar     }) => {
 
@@ -54,12 +54,12 @@ const PurchaseHistory = ({ setShowNavBar     }) => {
  
     return (
         <>
-            <Wrapper hasItems={purchasedList.length > 0}>
+            <Wrapper hasItems={purchasedList.filter(gift => gift.dateAdded !== undefined).length > 0}>
                 <HeaderText>PURCHASE HISTORY</HeaderText>
                 {purchasedList.length === 0 ? 
                     <NoItemsText>YOU HAVE NOT MARKED ANY ITEMS AS PURCHASED YET</NoItemsText> :
                     <ListWrapper>
-                        {purchasedList.map(item => (
+                        {purchasedList.filter(gift => gift.dateAdded !== undefined).map(item => (
                             <ListItem 
                                 key={item.key}
                                 item={item}

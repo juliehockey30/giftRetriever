@@ -240,7 +240,7 @@ const MyList = ({ setShowNavBar }) => {
                     </Modal>
                 </Overlay>
             }
-            <Wrapper hasItems={myList.length > 0}>
+            <Wrapper hasItems={myList.filter(gift => gift.dateAdded !== undefined).length > 0}>
                 <HeaderText>MY WISH LIST</HeaderText>
                 <StyledButton onClick={addItemOnClick}>ADD ITEM TO WISH LIST</StyledButton>
                 {myList.length === 0 ? 

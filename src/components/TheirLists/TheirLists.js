@@ -176,7 +176,7 @@ const TheirLists = ({ setShowNavBar     }) => {
                     </Modal>
                 </Overlay>
             }
-            <Wrapper hasItems={selectedList && selectedList.length > 0}>
+            <Wrapper hasItems={selectedList && selectedList.filter(gift => gift.dateAdded !== undefined).length > 0}>
                 <HeaderText>GROUP WISH LISTS</HeaderText>
                 <SelectsWrapper>
                     <DropDownContainer>
