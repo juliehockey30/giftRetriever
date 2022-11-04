@@ -157,7 +157,6 @@ const MyList = ({ setShowNavBar }) => {
             link: itemLink,
             imageUrl: chosenImage
         }
-        console.log("ITEM TO BE MOVED IS ", itemToBeMoved)
         await addItemToCurrentList(userName, itemToBeMoved.key, movingItem)
         setShowMoveItemModal(false)
         setItemName('')

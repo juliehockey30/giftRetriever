@@ -37,6 +37,7 @@ const PurchaseHistory = ({ setShowNavBar     }) => {
                 const purchasedFor = item.val().purchasedFor;
                 const imageUrl = item.val().imageUrl;
                 const imageName = item.val().imageName;
+                const dateAdded = item.val().dateAdded;
                 item = {
                     key,
                     name,
@@ -44,7 +45,8 @@ const PurchaseHistory = ({ setShowNavBar     }) => {
                     link,
                     purchasedFor,
                     imageUrl,
-                    imageName
+                    imageName,
+                    dateAdded
                 }
                 itemsArr.push(item);
             });
@@ -56,7 +58,7 @@ const PurchaseHistory = ({ setShowNavBar     }) => {
         <>
             <Wrapper hasItems={purchasedList.filter(gift => gift.dateAdded !== undefined).length > 0}>
                 <HeaderText>PURCHASE HISTORY</HeaderText>
-                {purchasedList.length === 0 ? 
+                {purchasedList.filter(gift => gift.dateAdded !== undefined).length === 0 ? 
                     <NoItemsText>YOU HAVE NOT MARKED ANY ITEMS AS PURCHASED YET</NoItemsText> :
                     <ListWrapper>
                         {purchasedList.filter(gift => gift.dateAdded !== undefined).map(item => (

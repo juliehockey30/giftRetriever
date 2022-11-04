@@ -31,7 +31,6 @@ async function updateItemOnList(userName, key, data) {
  }
 
  async function addItemToCurrentList(userName, key, data) {
-    console.log("KEY IS: ", key)
     try {
          await firebase.addItemToCurrentList(userName, key, data)
      } catch(error) {

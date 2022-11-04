@@ -33,8 +33,6 @@ const HomePage = ({ setShowNavBar }) => {
 
     const history = useHistory();
 
-    console.log('ALL GROUPS: ', allGroups)
-
     if(!firebase.getCurrentUserEmail()) {
         history.push('/authenticate')
     }
@@ -99,8 +97,6 @@ const HomePage = ({ setShowNavBar }) => {
         await attachGroupToUser(groupCode.toUpperCase(), userName)
         setShowForm(false)
     }
-
-    console.log("ALL GROUPS: ", allGroups)
 
     return (
         <Wrapper>
