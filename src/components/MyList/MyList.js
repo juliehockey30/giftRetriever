@@ -30,6 +30,16 @@ import {
   UploadImageButton,
   UploadImageWrapper,
   Wrapper,
+  PreviousListBorder,
+  TabBarWrapper,
+  TabItem,
+  LeftWrapper,
+  SelectedListText,
+  DropDownContainer,
+  DropDownHeader,
+  DropDownList,
+  DropDownListItem,
+  HeadingWrapper,
 } from "./MyList.styled";
 
 const MyList = ({ setShowNavBar }) => {
@@ -39,6 +49,7 @@ const MyList = ({ setShowNavBar }) => {
   }
 
   const [currentUserEmail] = useState(firebase.getCurrentUserEmail());
+  const [kidsProfiles, setKidsProfiles] = useState([]);
   const userName = currentUserEmail
     ? currentUserEmail.substr(0, currentUserEmail.indexOf("@"))
     : "";
@@ -49,7 +60,7 @@ const MyList = ({ setShowNavBar }) => {
   const [itemDescription, setItemDescription] = useState("");
   const [chosenImage, setChosenImage] = useState("");
   const [itemImageUrl, setItemImageUrl] = useState("");
-  const [myList, setMyList] = useState([]);
+  const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [confirmButtonText, setConfirmButtonText] =
     useState("ADD TO WISH LIST");
@@ -63,12 +74,19 @@ const MyList = ({ setShowNavBar }) => {
   const [itemToBeUpdatedKey, setItemToBeUpdatedKey] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [selectedList, setSelectedList] = useState({
+    userName: userName,
+    displayName: "",
+  });
+
+  const [showProfilesDropdown, setShowProfilesDropdowns] = useState(false);
+
   useEffect(() => {
     setShowNavBar(true);
   }, [setShowNavBar]);
 
   useEffect(() => {
-    const db = firebase.getMyWishListItems(userName);
+    const db = firebase.getMyWishListItems(selectedList.userName);
     db.on("value", function (snapshot) {
       let itemsArr = [];
       snapshot.forEach(function (item) {
@@ -92,7 +110,24 @@ const MyList = ({ setShowNavBar }) => {
         };
         itemsArr.push(item);
       });
-      setMyList(itemsArr);
+      setList(itemsArr);
+    });
+  }, [selectedList.userName, userName]);
+
+  useEffect(() => {
+    const db = firebase.getKidsProfilesForParent(userName);
+    db.on("value", function (snapshot) {
+      let profilesArray = [];
+      snapshot.forEach(function (profile) {
+        const userName = profile.val().kidsUserName;
+        const displayName = profile.val().kidsDisplayName;
+        profile = {
+          userName,
+          displayName,
+        };
+        profilesArray.push(profile);
+      });
+      setKidsProfiles(profilesArray);
     });
   }, [userName]);
 
@@ -115,7 +150,7 @@ const MyList = ({ setShowNavBar }) => {
 
   async function handleAddItemToList() {
     await addItemToList(
-      userName,
+      selectedList.userName,
       itemName,
       itemDescription,
       itemLink,
@@ -141,7 +176,7 @@ const MyList = ({ setShowNavBar }) => {
   }
 
   async function confirmDeleteOnClick() {
-    await deleteItemFromList(userName, itemToBeDeleted.key);
+    await deleteItemFromList(selectedList.userName, itemToBeDeleted.key);
     setShowDeleteModal(false);
   }
 
@@ -152,7 +187,11 @@ const MyList = ({ setShowNavBar }) => {
       link: itemLink,
       imageUrl: chosenImage,
     };
-    await updateItemOnList(userName, itemToBeUpdatedKey, itemToBeUpdated);
+    await updateItemOnList(
+      selectedList.userName,
+      itemToBeUpdatedKey,
+      itemToBeUpdated
+    );
     setShowModal(false);
     setItemName("");
     setItemDescription("");
@@ -184,14 +223,65 @@ const MyList = ({ setShowNavBar }) => {
     return formattedDate === thisYear;
   };
 
+  const handleSelectList = (targetProfile) => {
+    setSelectedList({
+      userName: targetProfile.userName,
+      displayName: targetProfile.displayName,
+    });
+    setShowProfilesDropdowns(false);
+  };
+
   return (
     <>
       {showModal && (
         <Overlay>
           <Modal hasImage={chosenImage !== ""}>
-            <ModalHeader>{modalHeaderText}</ModalHeader>
+            <HeadingWrapper>
+              <ModalHeader>{modalHeaderText}</ModalHeader>
+              {kidsProfiles.length > 0 && !isUpdating ? (
+                <>
+                  <SelectedListText>{`You are adding this item to ${
+                    selectedList.userName === userName
+                      ? "YOUR"
+                      : `${selectedList.displayName.toUpperCase()}'S`
+                  } wishlist. If you wish to add an item to a different list, select it below.`}</SelectedListText>
+                  <DropDownContainer>
+                    <DropDownHeader
+                      onClick={() => setShowProfilesDropdowns(true)}
+                    >
+                      {selectedList.userName === userName
+                        ? "MYSELF ▼"
+                        : `${selectedList.displayName} ▼`}
+                    </DropDownHeader>
+                    {showProfilesDropdown && (
+                      <DropDownList>
+                        <DropDownListItem
+                          onClick={() =>
+                            handleSelectList({
+                              userName: userName,
+                              displayName: "",
+                            })
+                          }
+                          key={Math.random()}
+                        >
+                          Myself
+                        </DropDownListItem>
+                        {kidsProfiles.map((kp) => (
+                          <DropDownListItem
+                            onClick={() => handleSelectList(kp)}
+                            key={Math.random()}
+                          >
+                            {kp.displayName}
+                          </DropDownListItem>
+                        ))}
+                      </DropDownList>
+                    )}
+                  </DropDownContainer>
+                </>
+              ) : null}
+            </HeadingWrapper>
             <FormWrapper>
-              <div>
+              <LeftWrapper>
                 <div>
                   <StyledInput
                     hasValue={itemName !== ""}
@@ -230,7 +320,7 @@ const MyList = ({ setShowNavBar }) => {
                   </UploadImageButton>
                   <input id="files" hidden type="file" onChange={chooseFile} />
                 </UploadImageWrapper>
-              </div>
+              </LeftWrapper>
               {chosenImage && (
                 <ImageWrapper>
                   <ImagePreview loading={loading} src={chosenImage} />
@@ -274,22 +364,48 @@ const MyList = ({ setShowNavBar }) => {
           </Modal>
         </Overlay>
       )}
-      <Wrapper
-        hasItems={
-          myList.filter((gift) => gift.dateAdded !== undefined).length > 0
-        }
-      >
+      <Wrapper>
         <HeaderText>MY WISH LIST</HeaderText>
         <StyledButton onClick={addItemOnClick}>
           ADD ITEM TO WISH LIST
         </StyledButton>
-        {myList.length === 0 ? (
+        {kidsProfiles.length > 0 ? (
+          <TabBarWrapper>
+            <TabItem
+              selected={selectedList.userName === userName}
+              onClick={() =>
+                setSelectedList({
+                  userName: userName,
+                  displayName: "",
+                })
+              }
+            >
+              My List
+            </TabItem>
+            {kidsProfiles.map((kp) => (
+              <TabItem
+                selected={selectedList.userName === kp.userName}
+                onClick={() =>
+                  setSelectedList({
+                    userName: kp.userName,
+                    displayName: kp.displayName,
+                  })
+                }
+              >{`${kp.displayName}'s List`}</TabItem>
+            ))}
+          </TabBarWrapper>
+        ) : null}
+        {list.filter((gift) => addedThisYear(gift.dateAdded)).length === 0 ? (
           <NoItemsText>
-            NO ITEMS HAVE BEEN ADDED TO YOUR WISH LIST YET
+            {`NO ITEMS HAVE BEEN ADDED TO ${
+              selectedList.displayName === ""
+                ? "YOUR"
+                : `${selectedList.displayName.toUpperCase()}'S`
+            } WISH LIST YET THIS YEAR`}
           </NoItemsText>
         ) : (
           <ListWrapper>
-            {myList
+            {list
               .filter((i) => addedThisYear(i.dateAdded))
               .map((item) => (
                 <ListItem
@@ -310,13 +426,18 @@ const MyList = ({ setShowNavBar }) => {
               ))}
           </ListWrapper>
         )}
+        <PreviousListBorder />
         <PreviousListTitle>Previous Wish List Items</PreviousListTitle>
         <PreviousListDescription>
-          Items that were added to your wish list over 1 year ago and have not
-          been marked as purchased will appear here.
+          {`Items that were added to ${
+            selectedList.displayName === ""
+              ? "your"
+              : `${selectedList.displayName}'s`
+          } wish list over 1 year ago and have not
+          been marked as purchased will appear here.`}
         </PreviousListDescription>
         <ListWrapper>
-          {myList
+          {list
             .filter((i) => !addedThisYear(i.dateAdded) && i.purchased === false)
             .map((item) => (
               <ListItem

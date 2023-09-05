@@ -7,6 +7,7 @@ import {
   ListWrapper,
   NoItemsText,
   Wrapper,
+  PreviousListBorder,
 } from "./PurchaseHistory.styled";
 import {
   PreviousListTitle,
@@ -69,11 +70,7 @@ const PurchaseHistory = ({ setShowNavBar }) => {
 
   return (
     <>
-      <Wrapper
-        hasItems={purchasedList.filter((gift) =>
-          purchasedThisYear(gift.dateAdded)
-        )}
-      >
+      <Wrapper>
         <HeaderText>{`PURCHASE HISTORY ${new Date().getFullYear()}`}</HeaderText>
         {purchasedList.filter((gift) => purchasedThisYear(gift.date)).length ===
         0 ? (
@@ -89,10 +86,11 @@ const PurchaseHistory = ({ setShowNavBar }) => {
               ))}
           </ListWrapper>
         )}
+        <PreviousListBorder />
         <PreviousListTitle>Previously Purchased Items</PreviousListTitle>
         <PreviousListDescription>
-          Items that you purchased not in this year will appear below, along
-          with the year you purchased them.
+          Items that you purchased over 1 year ago will appear below, along with
+          the year you purchased them.
         </PreviousListDescription>
         {purchasedList.filter((gift) => !purchasedThisYear(gift.date))
           .length === 0 ? (
