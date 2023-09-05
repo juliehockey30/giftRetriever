@@ -72,8 +72,8 @@ const PurchaseHistory = ({ setShowNavBar }) => {
     <>
       <Wrapper>
         <HeaderText>{`PURCHASE HISTORY ${new Date().getFullYear()}`}</HeaderText>
-        {purchasedList.filter((gift) => purchasedThisYear(gift.date)).length ===
-        0 ? (
+        {purchasedList.filter((gift) => purchasedThisYear(gift.dateAdded))
+          .length === 0 ? (
           <NoItemsText>
             YOU HAVE NOT MARKED ANY ITEMS AS PURCHASED YET THIS YEAR
           </NoItemsText>
