@@ -179,17 +179,37 @@ const Overlay = styled.div`
   z-index: 1;
 `;
 
-const PurchasedTitle = styled.p`
-  color: #c71518;
-  font-size: 2rem;
+const PurchasedListBorder = styled.div`
+  border-top: 1px solid #26323f;
   margin: 6rem 5rem 0 5rem;
+  height: 2px;
+  width: 90%;
+`;
+
+const PurchasedListDescription = styled.p`
+  color: #3d3937;
+  font-size: 1rem;
+  margin: 0 5rem 2rem 5rem;
   text-align: center;
 
   @import url("https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap");
   font-family: "Zen Antique", serif;
 
   @media (max-width: 768px) {
-    margin: 6rem 1rem 0 1rem;
+    margin: 0 2rem 2rem 2rem;
+  }
+`;
+
+const PurchasedTitle = styled.p`
+  color: #3d3937;
+  font-size: 2rem;
+  text-align: center;
+
+  @import url("https://fonts.googleapis.com/css2?family=Zen+Antique&display=swap");
+  font-family: "Zen Antique", serif;
+
+  @media (max-width: 768px) {
+    margin: 1rem 1rem 0 1rem;
   }
 `;
 
@@ -232,6 +252,8 @@ export {
   ModalSubtext,
   NoItemsText,
   Overlay,
+  PurchasedListBorder,
+  PurchasedListDescription,
   PurchasedTitle,
   SelectsWrapper,
   Wrapper,

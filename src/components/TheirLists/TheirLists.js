@@ -16,6 +16,8 @@ import {
   ModalSubtext,
   NoItemsText,
   Overlay,
+  PurchasedListBorder,
+  PurchasedListDescription,
   PurchasedTitle,
   SelectsWrapper,
   Wrapper,
@@ -176,6 +178,14 @@ const TheirLists = ({ setShowNavBar }) => {
     setOpenSelectListMenu(false);
   }
 
+  const addedThisYear = (date) => {
+    const dateObj = new Date(date);
+    const formattedDate = dateObj.getFullYear();
+    const thisYear = new Date().getFullYear();
+
+    return formattedDate === thisYear;
+  };
+
   return (
     <>
       {showConfirmPurchasedModal && (
@@ -254,9 +264,7 @@ const TheirLists = ({ setShowNavBar }) => {
               <>
                 <ListWrapper>
                   {selectedList
-                    .filter(
-                      (gift) => !gift.purchased && gift.dateAdded !== undefined
-                    )
+                    .filter((gift) => !gift.purchased)
                     .map((item) => (
                       <WishListItem
                         key={item.key}
@@ -268,11 +276,19 @@ const TheirLists = ({ setShowNavBar }) => {
                       />
                     ))}
                 </ListWrapper>
+                <PurchasedListBorder />
                 <PurchasedTitle>Already Purchased Gifts</PurchasedTitle>
                 <ListWrapper>
+                  {selectedList.filter(
+                    (gift) => gift.purchased && addedThisYear(gift.dateAdded)
+                  ).length === 0 ? (
+                    <PurchasedListDescription>
+                      No gifts marked as purchased yet
+                    </PurchasedListDescription>
+                  ) : null}
                   {selectedList
                     .filter(
-                      (gift) => gift.purchased && gift.dateAdded !== undefined
+                      (gift) => gift.purchased && addedThisYear(gift.dateAdded)
                     )
                     .map((item) => (
                       <WishListItem key={item.key} item={item} />
