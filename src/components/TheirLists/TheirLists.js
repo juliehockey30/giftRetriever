@@ -264,7 +264,9 @@ const TheirLists = ({ setShowNavBar }) => {
               <>
                 <ListWrapper>
                   {selectedList
-                    .filter((gift) => !gift.purchased)
+                    .filter(
+                      (gift) => addedThisYear(gift.dateAdded) && !gift.purchased
+                    )
                     .map((item) => (
                       <WishListItem
                         key={item.key}
